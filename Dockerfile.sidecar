@@ -1,8 +1,9 @@
 # sidecar container
 FROM alpine/git
-RUN apk update && apk add git
+RUN apk update && apk add git openssh-client
 WORKDIR /app
-VOLUME /app
-SHELL ["/bin/sh", "-c"]
-ENTRYPOINT ["sh", "-c"]
-CMD 'while true ; echo "Pulling latest changes from Git..."; git pull origin main ; sleep 10 ; done'
+COPY id_rsa /root/.ssh/id_rsa
+RUN chmod 400 /root/.ssh/id_rsa
+COPY known_hosts /root/.ssh/known_hosts
+RUN chmod 644 /root/.ssh/known_hosts
+ENTRYPOINT ["sh", "-c", "trap : TERM INT; (ssh-agent sh -c 'ssh-add /root/.ssh/id_rsa && while true; do echo \"Pulling latest changes from Git...\"; git pull origin main; sleep 10; done')"]
