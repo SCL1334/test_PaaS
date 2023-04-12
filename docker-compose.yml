@@ -1,0 +1,18 @@
+version: '3'
+services:
+  app:
+    build: .
+    volumes:
+      - myapp:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - sidecar
+  sidecar:
+    build:
+      context: .
+      dockerfile: Dockerfile.sidecar
+    volumes:
+      - myapp:/app
+volumes:
+  myapp:

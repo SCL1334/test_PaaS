@@ -1,0 +1,8 @@
+# sidecar container
+FROM alpine/git
+RUN apk update && apk add git
+WORKDIR /app
+VOLUME /app
+SHELL ["/bin/sh", "-c"]
+ENTRYPOINT ["sh", "-c"]
+CMD 'while true ; echo "Pulling latest changes from Git..."; git pull origin main ; sleep 10 ; done'
